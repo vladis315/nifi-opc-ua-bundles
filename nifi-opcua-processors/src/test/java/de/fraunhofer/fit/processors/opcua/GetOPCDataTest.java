@@ -65,8 +65,8 @@ public class GetOPCDataTest {
         testRunner.setProperty(GetOPCData.OPCUA_SERVICE, "controller");
         testRunner.setProperty(GetOPCData.RETURN_TIMESTAMP, "Both");
         testRunner.setProperty(GetOPCData.EXCLUDE_NULL_VALUE, "Yes");
-        testRunner.setProperty(GetOPCData.TAG_LIST_SOURCE, "Local File");
-        testRunner.setProperty(GetOPCData.TAG_LIST_FILE, tagFilePath);
+        // testRunner.setProperty(GetOPCData.TAG_LIST_SOURCE, "Local File");
+        // testRunner.setProperty(GetOPCData.TAG_LIST_FILE, tagFilePath);
 
         byte[] values = new String(
                 "ns=4;s=S71500/ET200MP-Station_2.PLC_1.GlobalVars.I_MAG1_EXT,123456,123456,1,0\n" +
@@ -92,8 +92,8 @@ public class GetOPCDataTest {
         testRunner.setProperty(GetOPCData.OPCUA_SERVICE, "controller");
         testRunner.setProperty(GetOPCData.RETURN_TIMESTAMP, "Both");
         testRunner.setProperty(GetOPCData.EXCLUDE_NULL_VALUE, "Yes");
-        testRunner.setProperty(GetOPCData.TAG_LIST_SOURCE, "Local File");
-        testRunner.setProperty(GetOPCData.TAG_LIST_FILE, tagFilePath);
+        // testRunner.setProperty(GetOPCData.TAG_LIST_SOURCE, "Local File");
+        // testRunner.setProperty(GetOPCData.TAG_LIST_FILE, tagFilePath);
         testRunner.setProperty(GetOPCData.AGGREGATE_RECORD, "true");
 
         byte[] values = new String(

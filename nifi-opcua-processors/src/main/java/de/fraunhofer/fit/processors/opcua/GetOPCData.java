@@ -80,10 +80,10 @@ public class GetOPCData extends AbstractProcessor {
     public static final PropertyDescriptor TAG_LIST_FILE = new PropertyDescriptor
             .Builder().name("Tag List Location")
             .description("The location of the tag list file")
-            .required(true)
+            .required(false)
             .addValidator(StandardValidators.FILE_EXISTS_VALIDATOR)
             .sensitive(false)
-            .expressionLanguageSupported(ExpressionLanguageScope.VARIABLE_REGISTRY)
+            .expressionLanguageSupported(ExpressionLanguageScope.ENVIRONMENT)
             .build();
 
     public static final PropertyDescriptor EXCLUDE_NULL_VALUE = new PropertyDescriptor

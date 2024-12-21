@@ -14,13 +14,12 @@ RUN mvn clean package -DskipTests
 # ----------------
 # Build a new Nifi image with the newly generated nar file included
 
-FROM apache/nifi:1.4.0
+FROM apache/nifi:2.0.0
 
 ARG BASE_DIR=/source
 
 ENV NIFI_BASE_DIR /opt/nifi
-ENV NIFI_HOME ${NIFI_BASE_DIR}/nifi-1.4.0
-
+ENV NIFI_HOME ${NIFI_BASE_DIR}/nifi-2.0.0
 COPY --from=builder ${BASE_DIR}/nifi-opcua-nar/target/*.nar ${NIFI_HOME}/lib/nifi-opcua.nar
 
 EXPOSE 8080 8443 10000
