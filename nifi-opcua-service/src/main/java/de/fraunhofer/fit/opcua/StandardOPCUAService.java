@@ -409,12 +409,43 @@ public class StandardOPCUAService extends AbstractControllerService implements O
 
             List<DataValue> rvList = opcClient.readValues(0, TimestampsToReturn.Both, nodeIdList).get();
 
+            String format = "JSON"; // default format
+            // TODO: pass the format as argument to the service
+            
             StringBuilder serverResponse = new StringBuilder();
-
-            for (int i = 0; i < tagNames.size(); i++) {
-                String valueLine;
-                valueLine = writeCsv(tagNames.get(i), returnTimestamp, rvList.get(i), excludeNullValue, nullValueString);
-                serverResponse.append(valueLine);
+            
+            if ("JSON".equals(format)) {
+                serverResponse.append("{ ");
+            
+                for (int i = 0; i < tagNames.size(); i++) {
+                    DataValue value = rvList.get(i);
+                    String valueStr;
+            
+                    if (value == null || value.getValue() == null || value.getValue().getValue() == null) {
+                        valueStr = "null";
+                    } else {
+                        Object val = value.getValue().getValue();
+                        if (val instanceof String || val instanceof Number || val instanceof Boolean) {
+                            valueStr = val.toString();
+                        } else {
+                            valueStr = "\"" + val.toString() + "\"";
+                        }
+                    }
+            
+                    serverResponse.append("\"").append(tagNames.get(i)).append("\" : ").append(valueStr);
+                    if (i < tagNames.size() - 1) {
+                        serverResponse.append(", ");
+                    }
+                }
+            
+                serverResponse.append(" }");
+            
+            } else {
+                for (int i = 0; i < tagNames.size(); i++) {
+                    String valueLine;
+                    valueLine = writeCsv(tagNames.get(i), returnTimestamp, rvList.get(i), excludeNullValue, nullValueString);
+                    serverResponse.append(valueLine);
+                }
             }
 
             return serverResponse.toString().trim().getBytes();
