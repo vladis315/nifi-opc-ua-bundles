@@ -415,31 +415,7 @@ public class StandardOPCUAService extends AbstractControllerService implements O
             StringBuilder serverResponse = new StringBuilder();
             
             if ("JSON".equals(format)) {
-                serverResponse.append("{ ");
-            
-                for (int i = 0; i < tagNames.size(); i++) {
-                    DataValue value = rvList.get(i);
-                    String valueStr;
-            
-                    if (value == null || value.getValue() == null || value.getValue().getValue() == null) {
-                        valueStr = "null";
-                    } else {
-                        Object val = value.getValue().getValue();
-                        if (val instanceof String || val instanceof Number || val instanceof Boolean) {
-                            valueStr = val.toString();
-                        } else {
-                            valueStr = "\"" + val.toString() + "\"";
-                        }
-                    }
-            
-                    serverResponse.append("\"").append(tagNames.get(i)).append("\" : ").append(valueStr);
-                    if (i < tagNames.size() - 1) {
-                        serverResponse.append(", ");
-                    }
-                }
-            
-                serverResponse.append(" }");
-            
+                serverResponse.append(getDataInJSON(tagNames, rvList, returnTimestamp));
             } else {
                 for (int i = 0; i < tagNames.size(); i++) {
                     String valueLine;
@@ -456,6 +432,58 @@ public class StandardOPCUAService extends AbstractControllerService implements O
 
     }
 
+    private String getDataInJSON(List<String> tagNames, List<DataValue> rvList, String returnTimestamp) {
+        StringBuilder serverResponse = new StringBuilder();
+        serverResponse.append("{ ");
+
+        for (int i = 0; i < tagNames.size(); i++) {
+            DataValue value = rvList.get(i);
+            String valueStr;
+
+            if (value == null || value.getValue() == null || value.getValue().getValue() == null) {
+                valueStr = "null";
+            } else {
+                Object val = value.getValue().getValue();
+                if (val instanceof String || val instanceof Number || val instanceof Boolean) {
+                    valueStr = val.toString();
+                } else {
+                    valueStr = "\"" + val.toString() + "\"";
+                }
+            }
+
+            serverResponse.append("\"").append(tagNames.get(i)).append("\" : { ")
+                          .append("\"value\" : ").append(valueStr).append(", ");
+
+            if (("ServerTimestamp").equals(returnTimestamp) || ("Both").equals(returnTimestamp)) {
+                serverResponse.append("\"serverTimestamp\" : ");
+                if (value != null && value.getServerTime() != null) {
+                    serverResponse.append("\"").append(value.getServerTime().getJavaTime()).append("\"");
+                } else {
+                    serverResponse.append("null");
+                }
+                serverResponse.append(", ");
+            }
+
+            if (("SourceTimestamp").equals(returnTimestamp) || ("Both").equals(returnTimestamp)) {
+                serverResponse.append("\"sourceTimestamp\" : ");
+                if (value != null && value.getSourceTime() != null) {
+                    serverResponse.append("\"").append(value.getSourceTime().getJavaTime()).append("\"");
+                } else {
+                    serverResponse.append("null");
+                }
+                serverResponse.append(", ");
+            }
+
+            serverResponse.append("\"statusCode\" : ").append(value.getStatusCode().getValue())
+                          .append(" }");
+            if (i < tagNames.size() - 1) {
+                serverResponse.append(", ");
+            }
+        }
+
+        serverResponse.append(" }");
+        return serverResponse.toString();
+    }
 
     @Override
     public String subscribe(List<String> tagNames, BlockingQueue<String> queue,
