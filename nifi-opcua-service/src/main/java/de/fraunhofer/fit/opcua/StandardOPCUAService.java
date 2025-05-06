@@ -444,15 +444,33 @@ public class StandardOPCUAService extends AbstractControllerService implements O
                 valueStr = "null";
             } else {
                 Object val = value.getValue().getValue();
-                if (val instanceof String || val instanceof Number || val instanceof Boolean) {
+                if (val instanceof String) {
+                    String escapedStr = val.toString()
+                        .replace("\\", "\\\\")
+                        .replace("\"", "\\\"")
+                        .replace("\b", "\\b")
+                        .replace("\f", "\\f")
+                        .replace("\n", "\\n")
+                        .replace("\r", "\\r")
+                        .replace("\t", "\\t");
+                    valueStr = "\"" + escapedStr + "\"";
+                } else if (val instanceof Number || val instanceof Boolean) {
                     valueStr = val.toString();
                 } else {
-                    valueStr = "\"" + val.toString() + "\"";
+                    String escapedStr = val.toString()
+                        .replace("\\", "\\\\")
+                        .replace("\"", "\\\"")
+                        .replace("\b", "\\b")
+                        .replace("\f", "\\f")
+                        .replace("\n", "\\n")
+                        .replace("\r", "\\r")
+                        .replace("\t", "\\t");
+                    valueStr = "\"" + escapedStr + "\"";
                 }
             }
 
             serverResponse.append("\"").append(tagNames.get(i)).append("\" : { ")
-                          .append("\"value\" : ").append(valueStr).append(", ");
+                        .append("\"value\" : ").append(valueStr).append(", ");
 
             if (("ServerTimestamp").equals(returnTimestamp) || ("Both").equals(returnTimestamp)) {
                 serverResponse.append("\"serverTimestamp\" : ");
